@@ -12,17 +12,27 @@ st.subheader("Team Members: Eren Cetinok, Michael Driscoll")
 st.write("---")
 
 # Introduction + Required Page Descriptions
-st.write("""
+st.markdown("""
 Welcome to our Streamlit Web Development Lab03 project!  
 Use the sidebar on the left to navigate between the different pages.
 
-Below are descriptions of all pages in our web application:
+---
 
-1. **Home Page**: Overview of the project and navigation to all other pages.  
-2. **Weather Page**: Displays real-time weather data using an external API, with interactive graphs and analysis.  
-3. **Gemini Analysis Page**: Uses the Google Gemini LLM to analyze weather trends and generate explanatory or creative text.  
-4. **Gemini Chatbot Page**: An intelligent chatbot that understands weather data and remembers the conversation context.  
+### 📄 Pages in This Application
+
+#### **1. Home Page**
+Overview of the project and navigation to all other pages.
+
+#### **2. Weather Page**
+Displays real-time weather data using an external API, with interactive graphs and analysis.
+
+#### **3. Gemini Analysis Page**
+Uses the Google Gemini LLM to analyze weather trends and generate explanatory or creative text.
+
+#### **4. Gemini Chatbot Page**
+An intelligent chatbot that understands weather data and remembers the conversation context.
+
+---
+
+### 🌟 Feel free to explore!
 """)
-
-st.write("---")
-st.write("Feel free to explore!")
