@@ -1,5 +1,12 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="Lab03",
+    page_icon="🌦️",
+    layout="centered",
+    initial_sidebar_state="expanded",
+)
+
 # Title of App
 st.title("Web Development Lab03")
 
