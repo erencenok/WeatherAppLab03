@@ -1,43 +1,41 @@
 import streamlit as st
 import requests
-import pandas as pd
 import matplotlib.pyplot as plt
 
-st.title("🌦️ Weather Dashboard")
+st.title("Weather Forecast (Phase 2)")
 
-city = st.text_input("Enter a city name:", "Atlanta")
-days = st.slider("Forecast days:", 1, 7, 3)
+city = st.text_input("Enter a city:", "Atlanta")
+hours_to_show = st.slider("Hours to show", 6, 48, 24)
 
-geocode_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1"
-geo_response = requests.get(geocode_url).json()
+if st.button("Get Weather"):
+    geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}"
+    geo_data = requests.get(geo_url).json()
 
-if "results" in geo_response:
-    lat = geo_response["results"][0]["latitude"]
-    lon = geo_response["results"][0]["longitude"]
+    if "results" not in geo_data:
+        st.error("City not found.")
+    else:
+        lat = geo_data["results"][0]["latitude"]
+        lon = geo_data["results"][0]["longitude"]
 
-    st.write(f"**Coordinates:** {lat}, {lon}")
+        weather_url = (
+            f"https://api.open-meteo.com/v1/forecast?"
+            f"latitude={lat}&longitude={lon}&hourly=temperature_2m"
+        )
 
-    
-    weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m&forecast_days={days}"
-    weather_response = requests.get(weather_url).json()
+        weather_data = requests.get(weather_url).json()
+        hours = weather_data["hourly"]["time"][:hours_to_show]
+        temperatures = weather_data["hourly"]["temperature_2m"][:hours_to_show]
 
+        plt.figure(figsize=(10, 5))
+        plt.plot(hours, temperatures)
+        plt.title(f"Next {hours_to_show} Hours Temperature in {city}")
+        plt.xlabel("Time")
+        plt.ylabel("Temperature (°C)")
+        plt.xticks(rotation=45)
 
-    hourly = weather_response["hourly"]
-    df = pd.DataFrame({
-        "time": hourly["time"],
-        "temperature": hourly["temperature_2m"],
-    })
+        st.pyplot(plt)
 
-    st.subheader("Temperature Forecast")
-    fig, ax = plt.subplots()
-    ax.plot(df["time"], df["temperature"])
-    ax.set_xticklabels(df["time"], rotation=45)
-    st.pyplot(fig)
-
-    st.write("### Stats")
-    st.write(f"**Max Temp:** {df['temperature'].max()}°C")
-    st.write(f"**Min Temp:** {df['temperature'].min()}°C")
-    st.write(f"**Average Temp:** {df['temperature'].mean():.2f}°C")
-
-else:
-    st.error("City not found. Try another name.")
+        st.subheader("Stats")
+        st.write(f"Max Temp: {max(temperatures)}°C")
+        st.write(f"Min Temp: {min(temperatures)}°C")
+        st.write(f"Average Temp: {sum(temperatures)/len(temperatures):.2f}°C")
