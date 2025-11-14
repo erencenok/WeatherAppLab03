@@ -23,7 +23,10 @@ if st.button("Get Weather"):
         )
 
         weather_data = requests.get(weather_url).json()
-        hours = weather_data["hourly"]["time"][:hours_to_show]
+
+        raw_hours = weather_data["hourly"]["time"][:hours_to_show]
+        hours = [h.replace("T", " ") for h in raw_hours]
+
         temperatures = weather_data["hourly"]["temperature_2m"][:hours_to_show]
 
         plt.figure(figsize=(10, 5))
