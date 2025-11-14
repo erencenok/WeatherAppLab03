@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 st.title("Weather Forecast (Phase 2)")
 
-city = st.text_input("Enter a city:", "Atlanta")
+city = st.text_input("Enter a city:", "", placeholder="Type a city name")
 hours_to_show = st.slider("Hours to show", 6, 48, 24)
 
 if st.button("Get Weather"):
@@ -18,9 +18,9 @@ if st.button("Get Weather"):
         lon = geo_data["results"][0]["longitude"]
 
         weather_url = (
-    f"https://api.open-meteo.com/v1/forecast?"
-    f"latitude={lat}&longitude={lon}&hourly=temperature_2m&timezone=auto"
-)
+            f"https://api.open-meteo.com/v1/forecast?"
+            f"latitude={lat}&longitude={lon}&hourly=temperature_2m&timezone=auto"
+        )
 
         weather_data = requests.get(weather_url).json()
 
