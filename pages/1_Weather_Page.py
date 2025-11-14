@@ -18,9 +18,9 @@ if st.button("Get Weather"):
         lon = geo_data["results"][0]["longitude"]
 
         weather_url = (
-            f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={lat}&longitude={lon}&hourly=temperature_2m"
-        )
+    f"https://api.open-meteo.com/v1/forecast?"
+    f"latitude={lat}&longitude={lon}&hourly=temperature_2m&timezone=auto"
+)
 
         weather_data = requests.get(weather_url).json()
 
