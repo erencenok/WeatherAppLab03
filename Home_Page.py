@@ -6,7 +6,7 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="expanded",
 )
-
+st.markdown("<style>#MainMenu {visibility: visible;} footer {visibility: visible;}</style>", unsafe_allow_html=True)
 # Title of App
 st.title("Web Development Lab03")
 
