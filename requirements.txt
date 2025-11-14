@@ -1,3 +1,4 @@
-streamlit
-google-generativeai
+streamlit>=1.25
 requests
+pandas
+matplotlib
