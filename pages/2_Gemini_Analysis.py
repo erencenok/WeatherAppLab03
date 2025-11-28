@@ -4,12 +4,21 @@ import requests
 
 st.title("AI Weather Broadcaster (Phase 3)")
 
+# --- FIX: Define your API key ---
+api_key = st.secrets["GOOGLE_API_KEY"]
+
+# Create Gemini client
 client = genai.Client(api_key=api_key)
+
+# Inputs
+city = st.text_input("City", "Chicago")
+day = st.slider("How many days ahead?", 1, 7, 4)
 
 if st.button("Generate Forecast Script"):
     try:
-        # weather_data = ... your API call
-        
+        # (Your weather API fetch goes here)
+        weather_data = "Weather data goes here"
+
         prompt = f"""
         Generate a friendly weather broadcast for {city} for the next {day} days.
         Here is the raw forecast data:
