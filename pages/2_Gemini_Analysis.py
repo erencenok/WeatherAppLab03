@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-import google.generativeai as genai
+from google import genai
 
 st.title("AI Weather Broadcaster (Phase 3)")
 
@@ -35,9 +35,10 @@ if st.button("Generate Forecast Script"):
         """
 
         # KEY FIX: must include "models/"
-        model = genai.GenerativeModel("models/gemini-1.5-flash-001")
-
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=prompt
+        )
 
         st.subheader("📢 Your AI Weather Script")
         st.write(response.text)
