@@ -1,66 +1,41 @@
 import streamlit as st
-from openai import OpenAI
-import requests
+from google import genai
 
-st.title("AI Weather Broadcaster (OpenAI Version)")
+# Load your Gemini API key from Streamlit secrets:
+api_key = st.secrets["GEMINI_API_KEY"]
 
-# Load OpenAI key
-api_key = st.secrets["OPENAI_API_KEY"]
-client = OpenAI(api_key=api_key)
+# Create the Gemini client
+client = genai.Client(api_key=api_key)
 
-# Inputs
-city = st.text_input("City", "Chicago")
-days = st.slider("How many days ahead?", 1, 7, 3)
+st.title("Weather Analysis with Google Gemini")
 
-# Get coordinates
-def get_coordinates(city):
-    url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1"
-    r = requests.get(url).json()
-    if "results" not in r:
-        return None, None
-    lat = r["results"][0]["latitude"]
-    lon = r["results"][0]["longitude"]
-    return lat, lon
+# User inputs
+city = st.text_input("City", "Atlanta")
+day = st.slider("Days ahead (1–7)", 1, 7, 3)
 
-# Get weather
-def get_weather(lat, lon, days):
-    url = (
-        f"https://api.open-meteo.com/v1/forecast?"
-        f"latitude={lat}&longitude={lon}"
-        f"&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_mean"
-        f"&forecast_days={days}&timezone=auto"
-    )
-    return requests.get(url).json()
-
-# Generate script with OpenAI
-def make_script(city, days, weather_data):
-    prompt = f"""
-    You are a friendly TV weather broadcaster.
-
-    Create a broadcast-style script for {city} for the next {days} days.
-    Use this weather data:
-    {weather_data}
-    """
-
-    response = client.responses.create(
-        model="gpt-4.1-mini",
-        input=prompt
-    )
-
-    return response.output_text
+# Example weather data (replace with real API)
+weather_data = {
+    "temperature": "75°F",
+    "rain": "10%",
+    "wind": "5 mph",
+}
 
 if st.button("Generate Forecast Script"):
     try:
-        lat, lon = get_coordinates(city)
-        if lat is None:
-            st.error("City not found.")
-            st.stop()
+        prompt = f"""
+        You are a TV weatherman. Create a fun, conversational weather
+        forecast for {city} for the next {day} days using this data:
+        {weather_data}
+        """
 
-        weather = get_weather(lat, lon, days)
-        script = make_script(city, days, weather)
+        # Correct Gemini API call
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=prompt
+        )
 
-        st.subheader("📺 AI Weather Script")
-        st.write(script)
+        st.subheader("📺 Your Weatherman Script:")
+        st.write(response.text)
 
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"ERROR: {e}")
