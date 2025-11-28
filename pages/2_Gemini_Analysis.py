@@ -29,14 +29,12 @@ if st.button("Generate Forecast Script"):
             temps = data["hourly"]["temperature_2m"][:24]
 
             prompt = f"""
-            Create a fun weatherman broadcast script explaining the 24-hour temperature
-            forecast for {city} {day} days from now.
+            Create a fun and friendly weatherman broadcast script 
+            explaining the 24-hour temperature forecast for {city} {day} days from now.
             Temperatures: {temps}
             """
 
-            # ✅ Correct model for API v1
             model = genai.GenerativeModel("models/gemini-1.5-flash")
-
             response = model.generate_content(prompt)
 
             st.subheader("📢 Your AI Weather Script")
