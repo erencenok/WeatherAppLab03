@@ -4,7 +4,14 @@ import google.generativeai as genai
 
 st.title("AI Weather Broadcaster (Phase 3)")
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# Configuration should be done here
+# Make sure GEMINI_API_KEY is correctly set in .streamlit/secrets.toml
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+except Exception as e:
+    st.error(f"Failed to configure Gemini API: {e}. Check your secrets.")
+    st.stop()
+
 
 city = st.text_input("City", "")
 day = st.slider("How many days ahead?", 0, 7, 0)
@@ -26,6 +33,8 @@ if st.button("Generate Forecast Script"):
             )
             data = requests.get(weather_url).json()
 
+            # The slice might be incorrect if there aren't 24 hours of data,
+            # but we'll stick to the original logic for now.
             temps = data["hourly"]["temperature_2m"][:24]
 
             prompt = f"""
@@ -34,7 +43,8 @@ if st.button("Generate Forecast Script"):
             Temperatures: {temps}
             """
 
-            model = genai.GenerativeModel("gemini-pro")
+            # The standard model name is "gemini-pro"
+            model = genai.GenerativeModel("gemini-pro") 
             response = model.generate_content(prompt)
 
             st.subheader("📢 Your AI Weather Script")
