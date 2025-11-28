@@ -34,7 +34,7 @@ if st.button("Generate Forecast Script"):
             Temperatures: {temps}
             """
 
-            model = genai.GenerativeModel("gemini-1.5-flash")
+            model = genai.GenerativeModel("gemini-1.5-flash-latest")
             response = model.generate_content(prompt)
 
             st.subheader("📢 Your AI Weather Script")
