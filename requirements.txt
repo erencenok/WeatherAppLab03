@@ -3,4 +3,5 @@ requests
 pandas
 matplotlib
 google-genai>=1.0.0
+openai
 
