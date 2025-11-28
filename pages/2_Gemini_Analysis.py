@@ -1,10 +1,10 @@
 import streamlit as st
 import requests
-import google.generativeai as genai
+from google.generativeai import Client
 
 st.title("AI Weather Broadcaster (Phase 3)")
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+client = Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 city = st.text_input("City", "")
 day = st.slider("How many days ahead?", 0, 7, 0)
@@ -29,13 +29,15 @@ if st.button("Generate Forecast Script"):
             temps = data["hourly"]["temperature_2m"][:24]
 
             prompt = f"""
-            Create a fun and friendly weatherman broadcast script 
-            explaining the 24-hour temperature forecast for {city} {day} days from now.
+            Create a fun weatherman broadcast script explaining the 24-hour temperature
+            forecast for {city} {day} days from now.
             Temperatures: {temps}
             """
 
-            model = genai.GenerativeModel("models/gemini-1.5-flash")
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model="gemini-1.5-flash",
+                contents=prompt
+            )
 
             st.subheader("📢 Your AI Weather Script")
             st.write(response.text)
