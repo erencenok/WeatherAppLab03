@@ -4,8 +4,8 @@ import google.generativeai as genai
 
 st.title("AI Weather Broadcaster (Phase 3)")
 
-# configure API key
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# Correct API key setup for google-generativeai==0.8.3
+genai.api_key = st.secrets["GEMINI_API_KEY"]
 
 city = st.text_input("City")
 day = st.slider("How many days ahead?", 0, 7, 0)
@@ -17,7 +17,7 @@ if st.button("Generate Forecast Script"):
         geo = requests.get(geo_url).json()
 
         if "results" not in geo:
-            st.error("City not found")
+            st.error("City not found.")
             st.stop()
 
         lat = geo["results"][0]["latitude"]
@@ -26,20 +26,19 @@ if st.button("Generate Forecast Script"):
         # 2. Get weather
         weather_url = (
             f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={lat}&longitude={lon}&hourly=temperature_2m"
-            f"&forecast_days={day+1}&timezone=auto"
+            f"latitude={lat}&longitude={lon}"
+            f"&hourly=temperature_2m&forecast_days={day+1}&timezone=auto"
         )
         data = requests.get(weather_url).json()
-
         temps = data["hourly"]["temperature_2m"][:24]
 
-        # 3. Prompt Gemini
+        # 3. Gemini call
         prompt = f"""
-        Create a fun weatherman broadcast script for {city}, {day} days from now.
-        Temperatures (24 hrs): {temps}
+        Create a fun weather broadcaster script for {city}, {day} days from now.
+        Temperatures (24 hours): {temps}
         """
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-pro")  # 0.8.3 uses "gemini-pro"
         response = model.generate_content(prompt)
 
         st.subheader("📢 Your AI Weather Script")
