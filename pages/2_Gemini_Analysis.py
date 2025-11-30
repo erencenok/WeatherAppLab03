@@ -4,45 +4,45 @@ import google.generativeai as genai
 
 st.title("AI Weather Broadcaster (Phase 3)")
 
-# Configure API key using Streamlit Secrets
+# configure API key
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
-city = st.text_input("City", "")
+city = st.text_input("City")
 day = st.slider("How many days ahead?", 0, 7, 0)
 
 if st.button("Generate Forecast Script"):
     try:
-        # Step 1 — Get lat/lon
+        # 1. Get coordinates
         geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}"
         geo = requests.get(geo_url).json()
 
         if "results" not in geo:
-            st.error("City not found.")
+            st.error("City not found")
             st.stop()
 
         lat = geo["results"][0]["latitude"]
         lon = geo["results"][0]["longitude"]
 
-        # Step 2 — Get forecast
+        # 2. Get weather
         weather_url = (
             f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={lat}&longitude={lon}&daily=temperature_2m_max&timezone=auto"
+            f"latitude={lat}&longitude={lon}&hourly=temperature_2m"
+            f"&forecast_days={day+1}&timezone=auto"
         )
-        weather = requests.get(weather_url).json()
+        data = requests.get(weather_url).json()
 
-        forecast = weather["daily"]["temperature_2m_max"][day]
+        temps = data["hourly"]["temperature_2m"][:24]
 
-        # Step 3 — Build prompt
-        prompt = (
-            f"Create a short, fun weather broadcast about {city}, "
-            f"{day} days from now. The high temperature will be {forecast}°C."
-        )
+        # 3. Prompt Gemini
+        prompt = f"""
+        Create a fun weatherman broadcast script for {city}, {day} days from now.
+        Temperatures (24 hrs): {temps}
+        """
 
-        # Step 4 — Gemini call
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
 
-        st.subheader("AI Weather Script")
+        st.subheader("📢 Your AI Weather Script")
         st.write(response.text)
 
     except Exception as e:
