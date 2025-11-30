@@ -5,7 +5,7 @@ import google.generativeai as genai
 st.title("AI Weather Broadcaster (Phase 3)")
 
 # Correct API key setup for google-generativeai==0.8.3
-genai.api_key = st.secrets["GEMINI_API_KEY"]
+genai.api_key = st.secrets["GOOGLE_API_KEY"]
 
 city = st.text_input("City")
 day = st.slider("How many days ahead?", 0, 7, 0)
