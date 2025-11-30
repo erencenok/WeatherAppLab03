@@ -2,4 +2,4 @@ streamlit>=1.25
 requests
 pandas
 matplotlib
-google-generativeai
+google-generativeai==0.8.3
